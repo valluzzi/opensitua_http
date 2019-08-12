@@ -1,6 +1,6 @@
 # -----------------------------------------------------------------------------
 # Licence:
-# Copyright (c) 2012-2018 Luzzi Valerio for Gecosistema S.r.l.
+# Copyright (c) 2012-2019 Luzzi Valerio for Gecosistema S.r.l.
 #
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
@@ -28,13 +28,6 @@ import hashlib
 import base64
 import tempfile
 from .strings import listify,tempname,sformat
-from .stime import strftime
-
-def file(pathname):
-    """
-    file - True se pathname e' un file
-    """
-    return os.path.isfile(pathname) if pathname else False
 
 def isfile(pathname):
     """
@@ -42,17 +35,20 @@ def isfile(pathname):
     """
     return os.path.isfile(pathname) if pathname else False
 
+
 def directory(pathname):
     """
     directory - True se pathname e'  una cartella
     """
     return os.path.isdir(pathname) if pathname else False
 
+
 def exists(pathname):
     """
     exists - True se pathname is file or directory
     """
     return os.path.isfile(pathname) or os.path.isdir(pathname) if pathname else False
+
 
 def normpath(pathname):
     """
@@ -62,12 +58,14 @@ def normpath(pathname):
         return ""
     return os.path.normpath(pathname.replace("\\", "/")).replace("\\", "/")
 
+
 def justdrive(pathname):
     """
     justdrive - ritorna il drive o ptotocollo http: ftp: ... del url
     """
     arr = normpath(pathname).split("/", 2)
     return arr[0] if len(arr) > 1 else ""
+
 
 def justpath(pathname, n=1):
     """
@@ -79,11 +77,13 @@ def justpath(pathname, n=1):
         return "."
     return normpath(pathname)
 
+
 def justfname(pathname):
     """
     justfname - returns the basename
     """
     return normpath(os.path.basename(normpath(pathname)))
+
 
 def juststem(pathname):
     """
@@ -93,6 +93,7 @@ def juststem(pathname):
     (root, _) = os.path.splitext(pathname)
     return root
 
+
 def justext(pathname):
     """
     justext
@@ -100,6 +101,7 @@ def justext(pathname):
     pathname = os.path.basename(normpath(pathname))
     (_, ext) = os.path.splitext(pathname)
     return ext.lstrip(".")
+
 
 def forceext(pathname, newext):
     """
@@ -109,21 +111,25 @@ def forceext(pathname, newext):
     pathname = root + ("." + newext if len(newext.strip()) > 0 else "")
     return normpath(pathname)
 
+
 def name_without_ext(filename):
     """
     name_without_ext
     """
     return re.sub(r'\.(\w)+$', '', filename, 1, re.I)
 
+
 def strtofile(text, filename, append=False):
     """
     strtofile
     """
     try:
-        flag = "a" if append else "w"
+        flag = "ab" if append else "wb"
         mkdirs(justpath(filename))
         with open(filename, flag) as stream:
             if text:
+                if isinstance(text, str):
+                    text = text.encode('utf-8')
                 stream.write(text)
     except Exception as ex:
         print(ex)
@@ -151,6 +157,7 @@ def filetoarray(filename):
     except:
         return []
 
+
 def filesize(filename):
     """
     filesize
@@ -160,15 +167,6 @@ def filesize(filename):
     else:
         return -1
 
-def filectime(filename):
-    """
-    filectime - get the creation date
-    """
-    if file(filename) or directory(filename):
-        unixtimestamp = os.path.getctime(filename)
-        return strftime("%Y-%m-%d %H:%M:%S",datetime.datetime.fromtimestamp(unixtimestamp))
-    else:
-        return None
 
 def tempdir():
     """
@@ -176,11 +174,13 @@ def tempdir():
     """
     return tempfile.gettempdir()
 
+
 def tempfname(prefix="",postfix="",ext=""):
     """
     tempfname - return the name of temporary file
     """
     return normpath(tempfile.gettempdir())+"/"+tempname(prefix,postfix,ext)
+
 
 def rename(filesrc, filedest, overwrite=True):
     """
@@ -224,6 +224,7 @@ def mkdirs(pathname):
         pass
     return directory(pathname)
 
+
 def chdir(pathname):
     """
     chdir - change directory
@@ -233,12 +234,6 @@ def chdir(pathname):
         os.chdir(pathname)
         return True
     return False
-
-def pwd():
-    """
-    pwd - get current working directory
-    """
-    return os.getcwd()
 
 
 def ls(dirname=".", filter=r'.*', recursive=True, exclude=""):
@@ -330,59 +325,15 @@ def findpath(searchdir=".", filter=r".*", maxdepth=-1, firstonly=False):
 
 
 
-
-def md5sum(filename):
-    """
-    md5sum - returns themd5 of the file
-    """
-    if file(filename):
-        f = open(filename, mode='rb')
-        d = hashlib.md5()
-        while True:
-            buf = f.read(4096)
-            if not buf:
-                break
-            d.update(buf)
-        f.close()
-        return d.hexdigest()
-    else:
-        return ""
-
-def md5text(text):
-    """
-    md5text - Returns the md5 of the text
-    """
-    if (text!=None):
-        hash = hashlib.md5()
-        hash.update(text)
-        return hash.hexdigest()
-    return None
-
-def filehaschanged(filename, filemd5="", updatemd5=False):
-    """
-    filehaschanged - It needs an .md5 file to check
-    """
-    filemd5 = filemd5 if filemd5 else forceext(filename, "md5")
-    oldmd5 = filetostr(filemd5)
-    if oldmd5:
-        newmd5 = md5sum(filename)
-        if oldmd5.upper() == newmd5.upper():
-            return False
-    # If specified update the .md5 file
-    if updatemd5:
-        strtofile(md5sum(filename), filemd5)
-    return True
-
-
 def b64(filename):
     """
     b64
     """
-    data = ""
-    if os.path.isfile(filename):
-        with open(filename, 'rb') as f:
-            data = f.read()
-
-    return base64.standard_b64encode(data)
+    if file(filename):
+        with open(filename, 'rb') as stream:
+            data = stream.read()
+    else:
+        data = b''
+    return base64.standard_b64encode(data).decode('utf-8')
 
 

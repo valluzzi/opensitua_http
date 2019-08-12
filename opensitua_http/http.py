@@ -28,7 +28,6 @@ from jinja2 import Environment, FileSystemLoader
 import os,sys,math
 import json,base64, urllib
 from cgi import FieldStorage
-from builtins import str as unicode
 import sqlite3
 
 
@@ -76,7 +75,7 @@ class Form:
         """
         getvalue
         """
-        if self.form.has_key(key):
+        if key in self.form:
             return self.form[key]
         else:
             return default
@@ -120,24 +119,6 @@ def webpath(filename, pivot ):
     """
     return "/" + rightpart(normpath(filename), pivot)
 
-def loadscripts(dirnames,type="js"):
-    """
-    loadjs
-    """
-    text = ""
-    dirnames = listify(dirnames, sep=",")
-
-    for dirname in dirnames:
-        filenames = ls(dirname, r'.*\.%s$'%(type), recursive=True)
-        for filename in filenames:
-            filename = webpath(filename,"/apps/")
-            if filename != '/':
-                if   type=="js":
-                    text += sformat("<script type='text/javascript' src='{filename}'></script>\n", {"filename": filename});
-                elif type=="css":
-                    text += sformat("<link href='{filename}' rel='stylesheet' type='text/css'/>\n",{"filename": filename});
-
-    return text
 
 def loadlibs(dirnames, type, DOCUMENT_ROOT):
     """
@@ -154,7 +135,6 @@ def loadlibs(dirnames, type, DOCUMENT_ROOT):
     for dirname in dirnames:
         filenames = ls(dirname, r'.*\.%s$'%(type), recursive=True)
         for filename in filenames:
-            #DOCUMENT_ROOT = leftpart(normpath(filename), "/lib/")
             webname = "/lib/" + rightpart(normpath(filename), "/lib/")
             if webname and webname != '/lib/':
                 if   type=="js":
@@ -220,21 +200,20 @@ def getCookies(environ):
     return mapify(HTTP_COOKIE,";")
 
 
+
+
+
 def htmlResponse(environ, start_response=None, checkuser=False):
     """
     htmlResponse - return a Html Page
     """
-
-    if checkuser and not check_user_permissions(environ):
-        environ["url"] = justpath(environ["SCRIPT_FILENAME"])+"/back.html"
-        return htmlResponse(environ, start_response)
 
     url = environ["url"] if "url" in environ else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
     DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
 
-    if not isfile(url):
+    if not os.path.isfile(url):
         return httpResponseNotFound(start_response)
 
     workdir    = justpath(url)
@@ -251,15 +230,12 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     env = Environment(loader=FileSystemLoader(workdir))
     t = env.get_template(index_html)
 
-    import opensitua_core
-
     variables = {
         "loadjs":  loadlibs(jss, "js", DOCUMENT_ROOT),
         "loadcss": loadlibs(csss, "css", DOCUMENT_ROOT),
         "APPNAME": juststem(workdir),
         "os": os,
         "math": math,
-        "gecosistema_core": opensitua_core,
         "environ":environ,
         "__file__":url
     }
@@ -267,33 +243,12 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     return httpResponseOK(html, start_response)
 
 
-def check_user_permissions(environ):
-    """
-    check_user_permissions
-    """
-    url = normpath(environ["SCRIPT_FILENAME"])
-    filedb = justpath(url) + "/htaccess.sqlite"
-    if not isfile(filedb):
-        DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else leftpart(normpath(__file__), "/apps/")
-        filedb = DOCUMENT_ROOT + "/htaccess.sqlite"
+if __name__=="__main__":
 
-    HTTP_COOKIE = getCookies(environ)
+    environ = {
 
-    if os.path.isfile(filedb):
-        conn = sqlite3.connect(filedb)
-        conn.create_function("md5", 1, md5text)
-        c = conn.cursor()
-        HTTP_COOKIE["__token__"] = HTTP_COOKIE["__token__"] if "__token__" in HTTP_COOKIE else ""
+        "url":"index.html"
 
-        sql = """
-        SELECT COUNT(*),[mail] FROM [users] 
-        WHERE ('{__token__}' LIKE md5([token]||strftime('%Y-%m-%d','now')) AND [enabled])
-                OR ([mail] LIKE 'everyone' AND [enabled]);"""
-        sql = sformat(sql, HTTP_COOKIE)
+    }
 
-        c.execute(sql)
-        (user_enabled,mail) = c.fetchone()
-        conn.close()
-        return mail if user_enabled else False
-
-    return False
+    print(htmlResponse(environ, None))
