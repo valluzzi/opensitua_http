@@ -207,7 +207,6 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     """
     htmlResponse - return a Html Page
     """
-
     url = environ["url"] if "url" in environ else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
@@ -230,12 +229,15 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     env = Environment(loader=FileSystemLoader(workdir))
     t = env.get_template(index_html)
 
+    import opensitua_http as pkg
+
     variables = {
         "loadjs":  loadlibs(jss, "js", DOCUMENT_ROOT),
         "loadcss": loadlibs(csss, "css", DOCUMENT_ROOT),
         "APPNAME": juststem(workdir),
         "os": os,
         "math": math,
+        "package": pkg,
         "environ":environ,
         "__file__":url
     }
