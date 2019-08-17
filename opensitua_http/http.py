@@ -180,6 +180,15 @@ def httpResponseNotFound(start_response):
     """
     return httpResponse("404 NOT FOUND", "404 NOT FOUND", start_response)
 
+def httpImageResponse(data, start_response):
+    """
+    httpImageResponse
+    """
+    response_headers = [('Content-type', 'image/png'), ('Content-Length', "%s"%len(data))]
+    if start_response:
+        start_response("200 OK", response_headers)
+    return [data]
+
 def JSONResponse(obj, start_response):
     """
     JSONResponse
