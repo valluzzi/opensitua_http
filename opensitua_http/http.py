@@ -26,7 +26,7 @@ from .filesystem import *
 from .strings import *
 from jinja2 import Environment, FileSystemLoader
 import os,sys,math
-import json,base64, urllib
+import json,base64, urllib.parse
 from cgi import FieldStorage
 import sqlite3
 
@@ -48,13 +48,13 @@ class Form:
             self.form = {}
             for key in form:
                 value = form.getvalue(key)
-                value = urllib.unquote(value).decode('utf8')
+                value = urllib.parse.unquote(value)
                 self.form[key] = value
         except:
             _environ = {}
             for key in environ:
                 value = environ[key]
-                value = urllib.unquote(value).decode('utf8')
+                #value = urllib.unquote(value).decode('utf8')
                 _environ[key] = value
             self.form = _environ
 
@@ -248,7 +248,9 @@ def htmlResponse(environ, start_response=None, checkuser=False):
         "math": math,
         "package": pkg,
         "environ":environ,
-        "__file__":url
+        "__file__":url,
+        "gecosistema_core": opensitua_core,
+        "opensitua_core": opensitua_core
     }
     html = t.render(variables)  #.encode("utf-8","replace")
     return httpResponseOK(html, start_response)
