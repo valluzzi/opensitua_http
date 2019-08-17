@@ -248,9 +248,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
         "math": math,
         "package": pkg,
         "environ":environ,
-        "__file__":url,
-        "gecosistema_core": opensitua_core,
-        "opensitua_core": opensitua_core
+        "__file__":url
     }
     html = t.render(variables)  #.encode("utf-8","replace")
     return httpResponseOK(html, start_response)
