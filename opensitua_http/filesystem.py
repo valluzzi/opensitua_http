@@ -217,12 +217,12 @@ def mkdirs(pathname):
     mkdirs - create a folder
     """
     try:
-        if file(pathname):
+        if os.path.isfile(pathname):
             pathname = justpath(pathname)
         os.makedirs(pathname)
     except:
         pass
-    return directory(pathname)
+    return os.path.isdir(pathname)
 
 
 def chdir(pathname):
