@@ -25,7 +25,7 @@
 from .filesystem import *
 from .strings import *
 from jinja2 import Environment, FileSystemLoader
-import os,sys,math
+import os,sys,math,re
 import json,base64, urllib.parse
 from cgi import FieldStorage
 import sqlite3
@@ -127,10 +127,11 @@ def loadlibs(dirnames, type, DOCUMENT_ROOT):
     text = ""
     dirnames = listify(dirnames, sep=",")
 
-    filever = DOCUMENT_ROOT + "/lib/js/core/version.js"
+    filever = DOCUMENT_ROOT + "/version.txt"
     version = filetostr(filever)
     if version:
-        version = version.replace("__VERSION__=", "").strip("'\"\t ;")
+        version = re.sub(r'__version__\s*=\s*', '', version, re.I)
+        version = version.strip('\'\"\r\n')
 
     for dirname in dirnames:
         filenames = ls(dirname, r'.*\.%s$'%(type), recursive=True)
