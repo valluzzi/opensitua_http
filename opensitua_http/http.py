@@ -26,92 +26,82 @@ from .filesystem import *
 from .strings import *
 from jinja2 import Environment, FileSystemLoader
 import os,sys,math,re
-import json,base64, urllib.parse
-from cgi import FieldStorage
+import json,base64
+from cgi import FieldStorage, parse_qs, escape
 import sqlite3
 
-
-def urlencode(s):
-    return urllib.quote(s)
-
-def urldecode(s):
-    return urllib.unquote(s).decode('utf8')
-
-
-class Form:
+class Params:
     """
-    Form
+    Params
     """
+
     def __init__(self, environ):
-        try:
-            form = get_post_form(environ)
-            self.form = {}
-            for key in form:
-                value = form.getvalue(key)
-                value = urllib.parse.unquote(value)
-                self.form[key] = value
-        except:
-            _environ = {}
-            for key in environ:
-                value = environ[key]
-                #value = urllib.unquote(value).decode('utf8')
-                _environ[key] = value
-            self.form = _environ
+        """
+        constructor
+        """
+        self.q = {}
 
-        if "encoded" in self.form and self.form["encoded"] == "true":
-            for key in self.form:
-                if key != "encoded":
+        if environ and environ["REQUEST_METHOD"]=="GET":
+            request_body = environ['QUERY_STRING']
+            q = parse_qs(request_body)
+            for key in q:
+                self.q[key] = [escape(item) for item in q[key]]
+
+        elif environ and environ["REQUEST_METHOD"]=="POST":
+
+            env_copy = environ.copy()
+            env_copy['QUERY_STRING']=''
+            q = FieldStorage(fp=environ["wsgi.input"], environ=env_copy, keep_blank_values=True)
+            for key in q:
+                self.q[key] = q.getvalue(key)
+
+        if "encoded" in self.q and self.q["encoded"] in ("true","1",1):
+            for key in q:
+                if not key in ("encoded","encrypted"):
                     try:
-                        self.form[key] = base64.b64decode(self.form[key])
+                        self.q[key] = base64.b64decode(self.q[key])
                     except:
                         pass
+
     def keys(self):
         """
         keys
         """
-        return self.form
+        return self.q.keys()
 
-    def getvalue(self, key, default=None):
+    def getvalue(self, key, defaultValue=None):
         """
         getvalue
         """
-        if key in self.form:
-            return self.form[key]
-        else:
-            return default
+        value = defaultValue
+        if key in self.q:
+            if isinstance(self.q[key],(tuple,list)) and len(self.q[key])>0:
+                value = self.q[key][0]
+            else:
+                value = self.q[key]
+
+        return value
+
+    def get(self, key, defaultValue=None):
+        """
+        get
+        """
+        if key in self.q:
+            if isinstance(self.q[key],(tuple,list)) and len(self.q[key])==1:
+                return self.q[key][0]
+            else:
+                return self.q[key]
+
+        return defaultValue
 
     def toObject(self):
-        """
-        toObject
-        """
-        return self.form
+        return self.q
 
-class InputProcessed(object):
-    """
-    InputProcessed
-    """
-
-    def read(self, *args):
-        raise EOFError('The wsgi.input stream has already been consumed')
-
-    readline = readlines = __iter__ = read
-
-def get_post_form(environ):
-    """
-    get_post_form
-    """
-    input = environ['wsgi.input']
-    post_form = environ.get('wsgi.post_form')
-    if post_form is not None and post_form[0] is input:
-        return post_form[2]
-    # This must be done to avoid a bug in cgi.FieldStorage
-    environ.setdefault('QUERY_STRING', '')
-    form = FieldStorage(fp=input, environ=environ, keep_blank_values=1)
-    new_input = InputProcessed()
-    post_form = (new_input, input, form)
-    environ['wsgi.post_form'] = post_form
-    environ['wsgi.input'] = new_input
-    return form
+    def toDictionary(self):
+        params = {}
+        for key in self.q:
+            params[key] = self.get(key)
+        return params
 
 def webpath(filename, pivot ):
     """
@@ -217,6 +207,9 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     """
     htmlResponse - return a Html Page
     """
+    form = Params(environ)
+    environ["url"] = form.getvalue("url","")
+
     url = environ["url"] if "url" in environ else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
