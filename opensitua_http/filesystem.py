@@ -336,4 +336,12 @@ def b64(filename):
         data = b''
     return base64.standard_b64encode(data).decode('utf-8')
 
-
+def md5text(text):
+    """
+    md5text - Returns the md5 of the text
+    """
+    if (text!=None):
+        hash = hashlib.md5()
+        hash.update(text.encode("utf-8"))
+        return hash.hexdigest()
+    return None

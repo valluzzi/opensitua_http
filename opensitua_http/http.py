@@ -199,7 +199,36 @@ def getCookies(environ):
     HTTP_COOKIE = environ["HTTP_COOKIE"] if "HTTP_COOKIE" in environ else ""
     return mapify(HTTP_COOKIE,";")
 
+def check_user_permissions(environ):
+    """
+    check_user_permissions
+    """
+    url = normpath(environ["SCRIPT_FILENAME"])
+    filedb = justpath(url) + "/htaccess.sqlite"
+    if not isfile(filedb):
+        DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else leftpart(normpath(__file__), "/lib/")
+        filedb = DOCUMENT_ROOT + "/htaccess.sqlite"
 
+    HTTP_COOKIE = getCookies(environ)
+
+    if os.path.isfile(filedb):
+        conn = sqlite3.connect(filedb)
+        conn.create_function("md5", 1, md5text)
+        c = conn.cursor()
+        HTTP_COOKIE["__token__"] = HTTP_COOKIE["__token__"] if "__token__" in HTTP_COOKIE else ""
+
+        sql = """
+        SELECT COUNT(*),[mail] FROM [users] 
+        WHERE ('{__token__}' LIKE md5([token]||strftime('%Y-%m-%d','now')) AND [enabled])
+                OR ([mail] LIKE 'everyone' AND [enabled]);"""
+        sql = sformat(sql, HTTP_COOKIE)
+
+        c.execute(sql)
+        (user_enabled,mail) = c.fetchone()
+        conn.close()
+        return mail if user_enabled else False
+
+    return False
 
 
 
@@ -207,12 +236,17 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     """
     htmlResponse - return a Html Page
     """
+    if checkuser and not check_user_permissions(environ):
+        return httpResponseNotFound(start_response)
+
+
     form = Params(environ)
     environ["url"] = form.getvalue("url","")
 
     url = environ["url"] if "url" in environ and environ["url"] else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
+    #DOCUMENT_ROOT=D:\Users\.....\OpenGIS3
     DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
 
     if not os.path.isfile(url):
