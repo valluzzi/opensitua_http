@@ -210,7 +210,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     form = Params(environ)
     environ["url"] = form.getvalue("url","")
 
-    url = environ["url"] if "url" in environ else normpath(environ["SCRIPT_FILENAME"])
+    url = environ["url"] if "url" in environ and environ["url"] else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
     DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
