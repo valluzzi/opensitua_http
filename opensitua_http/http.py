@@ -28,6 +28,7 @@ from jinja2 import Environment, FileSystemLoader
 import os,sys,math,re
 import json,base64
 from cgi import FieldStorage, parse_qs, escape
+from builtins import str as unicode
 import sqlite3
 
 class Params:
@@ -256,12 +257,12 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     index_html = justfname(url)
 
     jss = (DOCUMENT_ROOT + "/lib/js",
-           justpath(url),)
+           workdir,)
 
     csss = (DOCUMENT_ROOT + "/lib/css",
             DOCUMENT_ROOT + "/lib/js",
             DOCUMENT_ROOT + "/lib/images",
-            justpath(url),)
+            workdir,)
 
     env = Environment(loader=FileSystemLoader(workdir))
     t = env.get_template(index_html)
@@ -269,12 +270,13 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     import opensitua_http as pkg
 
     variables = {
-        "loadjs":  loadlibs(jss, "js", DOCUMENT_ROOT),
-        "loadcss": loadlibs(csss, "css", DOCUMENT_ROOT),
+        "loadjs":     loadlibs(jss, "js", DOCUMENT_ROOT),
+        "loadcss":    loadlibs(csss, "css", DOCUMENT_ROOT),
         "APPNAME": juststem(workdir),
         "os": os,
         "math": math,
         "package": pkg,
+        "opensitua_http":pkg,
         "environ":environ,
         "__file__":url
     }

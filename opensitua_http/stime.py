@@ -1,6 +1,6 @@
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 # Licence:
-# Copyright (c) 2012-2019 Valerio for Gecosistema S.r.l.
+# Copyright (c) 2012-2018 Luzzi Valerio
 #
 # The above copyright notice and this permission notice shall be
 # included in all copies or substantial portions of the Software.
@@ -15,21 +15,26 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 #
 #
-# Name:        opensitua_http
+# Name:        stime.py
 # Purpose:
 #
 # Author:      Luzzi Valerio
 #
-# Created:    12/08/2019
-#-------------------------------------------------------------------------------
+# Created:     08/08/2018
+# -------------------------------------------------------------------------------
+from .strings import isstring
+import datetime
 
+def strftime(frmt, text):
+    """
+    strftime
+    """
+    if not text:
+        return datetime.datetime.now().strftime(frmt)
+    elif isinstance(text, (datetime.datetime,datetime.date,) ):
+        return text.strftime(frmt)
+    elif isstring(text):
+        date = datetime.datetime.strptime(text, "%Y-%m-%d")
+        return date.strftime(frmt)
 
-__version__ = '0.0.16'
-
-from .filesystem import *
-from .strings import *
-from .stime import *
-from .http import *
-from .mapfile import *
-
-
+    return ""
