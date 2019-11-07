@@ -127,7 +127,12 @@ def loadlibs(dirnames, type, DOCUMENT_ROOT):
     for dirname in dirnames:
         filenames = ls(dirname, r'.*\.%s$'%(type), recursive=True)
         for filename in filenames:
-            webname = "/lib/" + rightpart(normpath(filename), "/lib/")
+            #common libraries
+            filename = normpath(filename)
+            if "/webgis/" in filename:
+                webname = "/webgis/"+ rightpart(filename, "/webgis/")
+            else:
+                webname = "/lib/" + rightpart(filename, "/lib/")
             if webname and webname != '/lib/':
                 if   type=="js":
                     text += sformat("<script type='text/javascript' src='{filename}?v={version}'></script>\n", {"filename": webname,"version":version});
@@ -256,13 +261,11 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     workdir    = justpath(url)
     index_html = justfname(url)
 
-    jss = (DOCUMENT_ROOT + "/lib/js",
-           workdir,)
+    jss = (DOCUMENT_ROOT + "/etc/opengis3/lib/js", workdir)
 
-    csss = (DOCUMENT_ROOT + "/lib/css",
-            DOCUMENT_ROOT + "/lib/js",
-            DOCUMENT_ROOT + "/lib/images",
-            workdir,)
+    csss = (DOCUMENT_ROOT + "/etc/opengis3/lib/css",
+            DOCUMENT_ROOT + "/etc/opengis3/lib/js",
+            DOCUMENT_ROOT + "/etc/opengis3/lib/images", workdir)
 
     env = Environment(loader=FileSystemLoader(workdir))
     t = env.get_template(index_html)

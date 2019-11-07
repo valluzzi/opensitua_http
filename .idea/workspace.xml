@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d345f851-93d0-4ebd-8a5e-e881ada15f58" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/opensitua_http/mapfile.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/opensitua_http/stime.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opensitua_http/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/opensitua_http/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/opensitua_http/http.py" beforeDir="false" afterPath="$PROJECT_DIR$/opensitua_http/http.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -19,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/opensitua_http/http.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="612">
-              <caret line="264" column="19" selection-start-line="264" selection-start-column="19" selection-end-line="264" selection-end-column="19" />
+            <state relative-caret-position="544">
+              <caret line="287" column="17" selection-start-line="287" selection-start-column="9" selection-end-line="287" selection-end-column="17" />
               <folding>
                 <element signature="e#924#949#0" expanded="true" />
               </folding>
@@ -73,8 +70,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-130" />
-    <option name="y" value="-547" />
+    <option name="x" value="-330" />
+    <option name="y" value="-1027" />
     <option name="width" value="1936" />
     <option name="height" value="1096" />
   </component>
@@ -179,11 +176,11 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-545" y="-1088" width="2576" height="1096" extended-state="6" />
+    <frame x="-545" y="-1088" width="2576" height="1096" extended-state="7" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.48390445" visible="true" weight="0.074324325" />
-      <window_info id="Structure" order="1" sideWeight="0.5160955" side_tool="true" visible="true" weight="0.074324325" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48390445" visible="true" weight="0.074324325" />
+      <window_info active="true" id="Structure" order="1" sideWeight="0.5160955" side_tool="true" visible="true" weight="0.074324325" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -286,8 +283,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/opensitua_http/http.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="612">
-          <caret line="264" column="19" selection-start-line="264" selection-start-column="19" selection-end-line="264" selection-end-column="19" />
+        <state relative-caret-position="544">
+          <caret line="287" column="17" selection-start-line="287" selection-start-column="9" selection-end-line="287" selection-end-column="17" />
           <folding>
             <element signature="e#924#949#0" expanded="true" />
           </folding>
