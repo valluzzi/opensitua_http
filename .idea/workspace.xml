@@ -13,8 +13,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/opensitua_http/http.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="379">
-              <caret line="45" column="57" lean-forward="true" selection-start-line="44" selection-start-column="8" selection-end-line="45" selection-end-column="57" />
+            <state relative-caret-position="753">
+              <caret line="79" column="28" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
               <folding>
                 <element signature="e#924#949#0" expanded="true" />
               </folding>
@@ -178,8 +178,8 @@
     <frame x="-8" y="-1088" width="1936" height="1096" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48286605" visible="true" weight="0.10074627" />
-      <window_info active="true" id="Structure" order="1" sideWeight="0.51713395" side_tool="true" visible="true" weight="0.10074627" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.48182762" visible="true" weight="0.10181237" />
+      <window_info active="true" id="Structure" order="1" sideWeight="0.5181724" side_tool="true" visible="true" weight="0.10181237" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
@@ -282,8 +282,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/opensitua_http/http.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="379">
-          <caret line="45" column="57" lean-forward="true" selection-start-line="44" selection-start-column="8" selection-end-line="45" selection-end-column="57" />
+        <state relative-caret-position="753">
+          <caret line="79" column="28" selection-start-line="79" selection-start-column="28" selection-end-line="79" selection-end-column="28" />
           <folding>
             <element signature="e#924#949#0" expanded="true" />
           </folding>
