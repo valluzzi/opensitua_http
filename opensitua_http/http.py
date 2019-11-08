@@ -254,6 +254,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
 
     #DOCUMENT_ROOT=D:\Users\.....\OpenGIS3
     DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
+    DOCUMENT_WWW  = DOCUMENT_ROOT+"/var/www"
 
     if not os.path.isfile(url):
         return httpResponseNotFound(start_response)
@@ -261,11 +262,11 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     workdir    = justpath(url)
     index_html = justfname(url)
 
-    jss = (DOCUMENT_ROOT + "/etc/opengis3/lib/js", workdir)
+    jss = (DOCUMENT_WWW + "/lib/js", workdir)
 
-    csss = (DOCUMENT_ROOT + "/etc/opengis3/lib/css",
-            DOCUMENT_ROOT + "/etc/opengis3/lib/js",
-            DOCUMENT_ROOT + "/etc/opengis3/lib/images", workdir)
+    csss = (DOCUMENT_WWW + "/ib/css",
+            DOCUMENT_WWW + "/lib/js",
+            DOCUMENT_WWW + "/lib/images", workdir)
 
     env = Environment(loader=FileSystemLoader(workdir))
     t = env.get_template(index_html)
