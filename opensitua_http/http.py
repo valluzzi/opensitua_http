@@ -42,26 +42,38 @@ class Params:
         """
         self.q = {}
 
-        environ["DOCUMENT_WWW"] = os.path.abspath(environ["DOCUMENT_ROOT"] + "/var/www")
-        self.q["DOCUMENT_WWW"]  = environ["DOCUMENT_WWW"]
-
-        if environ and environ["REQUEST_METHOD"]=="GET":
+        if environ and environ["REQUEST_METHOD"] == "GET":
             request_body = environ['QUERY_STRING']
             q = parse_qs(request_body)
             for key in q:
                 self.q[key] = [escape(item) for item in q[key]]
 
-        elif environ and environ["REQUEST_METHOD"]=="POST":
+        elif environ and environ["REQUEST_METHOD"] == "POST":
 
             env_copy = environ.copy()
-            env_copy['QUERY_STRING']=''
+            env_copy['QUERY_STRING'] = ''
             q = FieldStorage(fp=environ["wsgi.input"], environ=env_copy, keep_blank_values=True)
             for key in q:
                 self.q[key] = q.getvalue(key)
+                # print(key, "=", len(q.getvalue(key)))
 
-        if "encoded" in self.q and self.q["encoded"] in ("true","1",1):
+            # load extra query string info:
+            request_body = environ['QUERY_STRING']
+            q = parse_qs(request_body)
             for key in q:
-                if not key in ("encoded","encrypted"):
+                self.q[key] = [escape(item) for item in q[key]]
+
+        if environ and "DOCUMENT_ROOT" in environ:
+            self.q["DOCUMENT_ROOT"] = environ["DOCUMENT_ROOT"]
+            environ["DOCUMENT_WWW"] = os.path.abspath(environ["DOCUMENT_ROOT"] + "/var/www")
+            self.q["DOCUMENT_WWW"] = environ["DOCUMENT_WWW"]
+
+        if environ and "HTTP_COOKIE" in environ:
+            self.q["HTTP_COOKIE"] = mapify(environ["HTTP_COOKIE"], ";")
+
+        if "encoded" in self.q and self.q["encoded"] in ("true", "1", 1):
+            for key in q:
+                if not key in ("encoded", "encrypted"):
                     try:
                         self.q[key] = base64.b64decode(self.q[key])
                     except:
