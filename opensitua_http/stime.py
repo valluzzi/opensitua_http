@@ -23,7 +23,7 @@
 # Created:     08/08/2018
 # -------------------------------------------------------------------------------
 from .strings import isstring
-import datetime
+import datetime,random
 
 def strftime(frmt, text):
     """
@@ -38,3 +38,9 @@ def strftime(frmt, text):
         return date.strftime(frmt)
 
     return ""
+
+def randint(n):
+    """
+    randint
+    """
+    return random.randint(0,n)

@@ -126,14 +126,14 @@ def webpath(filename, pivot ):
     return "/" + rightpart(normpath(filename), pivot)
 
 
-def loadlibs(dirnames, type, DOCUMENT_ROOT):
+def loadlibs(dirnames, type, DOCUMENT_WWW):
     """
     loadlibs
     """
     text = ""
     dirnames = listify(dirnames, sep=",")
 
-    filever = DOCUMENT_ROOT + "/version.txt"
+    filever = DOCUMENT_WWW + "/webgis/version.txt"
     version = filetostr(filever)
     if version:
         version = re.sub(r'__version__\s*=\s*', '', version, re.I)
@@ -289,8 +289,8 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     import opensitua_http as pkg
 
     variables = {
-        "loadjs":     loadlibs(jss, "js", DOCUMENT_ROOT),
-        "loadcss":    loadlibs(csss, "css", DOCUMENT_ROOT),
+        "loadjs":     loadlibs(jss, "js", DOCUMENT_WWW),
+        "loadcss":    loadlibs(csss, "css", DOCUMENT_WWW),
         "APPNAME": juststem(workdir),
         "os": os,
         "math": math,
