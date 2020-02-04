@@ -28,6 +28,7 @@ import hashlib
 import base64
 import tempfile
 from .strings import listify,tempname,sformat
+from .stime import strftime
 
 def isfile(pathname):
     """
