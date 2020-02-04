@@ -16,8 +16,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/opensitua_http/http.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="277" column="31" lean-forward="true" selection-start-line="277" selection-start-column="31" selection-end-line="277" selection-end-column="31" />
+            <state relative-caret-position="715">
+              <caret line="279" column="36" selection-start-line="279" selection-start-column="36" selection-end-line="279" selection-end-column="36" />
               <folding>
                 <element signature="e#924#949#0" expanded="true" />
               </folding>
@@ -97,7 +97,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="1">
     <option name="x" value="189" />
     <option name="y" value="-1072" />
     <option name="width" value="1936" />
@@ -204,7 +204,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="189" y="-1072" width="1936" height="1096" extended-state="0" />
+    <frame x="189" y="-1072" width="1936" height="1096" extended-state="1" />
     <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.46728972" visible="true" weight="0.21908316" />
@@ -311,8 +311,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/opensitua_http/http.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="277" column="31" lean-forward="true" selection-start-line="277" selection-start-column="31" selection-end-line="277" selection-end-column="31" />
+        <state relative-caret-position="715">
+          <caret line="279" column="36" selection-start-line="279" selection-start-column="36" selection-end-line="279" selection-end-column="36" />
           <folding>
             <element signature="e#924#949#0" expanded="true" />
           </folding>

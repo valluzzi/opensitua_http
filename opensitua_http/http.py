@@ -277,7 +277,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     workdir    = justpath(url)
     index_html = justfname(url)
 
-    jss = (DOCUMENT_WWW + "/lib/js", DOCUMENT_ROOT + "/apps/common/lib/js", workdir)
+    jss = (DOCUMENT_WWW + "/lib/js", workdir)
 
     csss = (DOCUMENT_WWW + "/lib/css",
             DOCUMENT_WWW + "/lib/js",
