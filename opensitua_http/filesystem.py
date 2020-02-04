@@ -162,11 +162,20 @@ def filesize(filename):
     """
     filesize
     """
-    if file(filename):
+    if os.path.isfile(filename):
         return os.path.getsize(filename)
     else:
         return -1
 
+def filectime(filename):
+    """
+    filectime - get the creation date
+    """
+    if os.path.isfile(filename) or os.path.isdir(filename):
+        unixtimestamp = os.path.getctime(filename)
+        return strftime("%Y-%m-%d %H:%M:%S", datetime.datetime.fromtimestamp(unixtimestamp))
+    else:
+        return None
 
 def tempdir():
     """
