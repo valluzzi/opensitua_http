@@ -284,7 +284,6 @@ def listdir(dirname=".", filter=r'.*', recursive=True, sortby="name"):
         try:
             # Some dir could not be accessible
             items = os.listdir(dirname)
-            print(items)
             if  sortby=="name":
                 items.sort()
             elif sortby=="ctime":
