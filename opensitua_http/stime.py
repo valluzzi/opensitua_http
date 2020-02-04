@@ -33,8 +33,11 @@ def strftime(frmt, text):
         return datetime.datetime.now().strftime(frmt)
     elif isinstance(text, (datetime.datetime,datetime.date,) ):
         return text.strftime(frmt)
-    elif isstring(text):
+    elif isstring(text) and len(text)==10:
         date = datetime.datetime.strptime(text, "%Y-%m-%d")
+        return date.strftime(frmt)
+    elif isstring(text) and len(text)>10:
+        date = datetime.datetime.strptime(text, "%Y-%m-%d %H:%M:%S")
         return date.strftime(frmt)
 
     return ""
