@@ -287,7 +287,7 @@ def listdir(dirname=".", filter=r'.*', recursive=True, sortby="name"):
             if  sortby=="name":
                 items.sort()
             elif sortby=="ctime":
-                items = [{"name":item,"ctime":filectime(item)} for item in items]
+                items = [{"name":item,"ctime":filectime(dirname+"/"+item)} for item in items]
                 items.sort(key=lambda k:k["ctime"])
                 items = [item["name"] for item in items]
         except Exception as ex:
