@@ -215,7 +215,7 @@ def JSONResponse(obj, start_response):
 
     response_headers = [('Content-type', 'application/json'), ('Content-Length', str(len(text)))]
     if start_response:
-        start_response(status, response_headers)
+        start_response("200 OK", response_headers)
     return [text.encode('utf-8')]
 
 def getCookies(environ):
