@@ -407,6 +407,7 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
 
             # Warning!!
             rdata = band.ReadAsArray(0, 0, n, m)
+            rdata[nodata] = np.nan
             minValue, maxValue = np.asscalar(np.nanmin(rdata)), np.asscalar(np.nanmax(rdata))
 
             del data
