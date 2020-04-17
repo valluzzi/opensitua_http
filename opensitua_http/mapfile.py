@@ -406,9 +406,21 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
             datatype = str(rdata.dtype)
 
             # Warning!!
-            rdata = band.ReadAsArray(0, 0, n, m)
-            rdata[rdata==nodata] = np.nan
-            minValue, maxValue = np.asscalar(np.nanmin(rdata)), np.asscalar(np.nanmax(rdata))
+
+            stats = band.GetStatistics(True, True)
+            if stats:
+                minValue, maxValue = stats[0], stats[1]
+            else:
+                # Warning!!
+                rdata = band.ReadAsArray(0, 0, n, m)
+                if rdata.dtype in (np.float32,np.float64):
+                    rdata[rdata==nodata] = np.nan
+                    minValue, maxValue = np.asscalar(np.nanmin(rdata)), np.asscalar(np.nanmax(rdata))
+                else:
+                    rdata = rdata.astype(np.float32)
+                    rdata[rdata == nodata] = np.nan
+                    minValue, maxValue = np.asscalar(np.nanmin(rdata)), np.asscalar(np.nanmax(rdata))
+
 
             del data
             (x0, px, rotA, y0, rotB, py) = gt
