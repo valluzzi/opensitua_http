@@ -232,8 +232,8 @@ def check_user_permissions(environ):
     url = normpath(environ["SCRIPT_FILENAME"])
     filedb = justpath(url) + "/htaccess.sqlite"
     if not isfile(filedb):
-        DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else leftpart(normpath(__file__), "/lib/")
-        filedb = DOCUMENT_ROOT + "/htaccess.sqlite"
+        DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else leftpart(normpath(__file__), "/var/www/")
+        filedb = DOCUMENT_ROOT + "/etc/opengis3/htaccess.sqlite"
 
     HTTP_COOKIE = getCookies(environ)
 
