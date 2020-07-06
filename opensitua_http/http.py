@@ -156,6 +156,36 @@ def loadlibs(dirnames, type, DOCUMENT_WWW):
 
     return text
 
+def load(dirname, environ):
+    """
+    load
+    """
+    text = ""
+    DOCUMENT_ROOT = environ['DOCUMENT_ROOT']
+    filever = DOCUMENT_ROOT + "/var/www/webgis/version.txt"
+    version = filetostr(filever)
+    if version:
+        version = re.sub(r'__version__\s*=\s*', '', version, re.I)
+        version = version.strip('\'\"\r\n')
+    text += sformat("<script type='text/javascript' src='/webgis/version.txt?v={version}'></script>\n", {"version":version});
+
+    dirname = DOCUMENT_ROOT + "/var/www/"+ dirname
+    filenames = ls(dirname, r'.*\.(js|css)$', recursive=True)
+    for filename in filenames:
+        #common libraries
+        filename = normpath(filename)
+        type=justext(filename)
+        if "/webgis/" in filename:
+            webname = "/webgis/"+ rightpart(filename, "/webgis/")
+        else:
+            webname = "/lib/" + rightpart(filename, "/lib/")
+        if webname and webname != '/lib/':
+            if type=="js":
+                text += sformat("<script type='text/javascript' src='{filename}?v={version}'></script>\n", {"filename": webname,"version":version});
+            else:
+                text += sformat("<link href='{filename}?v={version}' rel='stylesheet' type='text/css'/>\n",{"filename": webname,"version":version});
+    return text
+
 def template(filetpl, fileout=None, env = None):
     """
     template -  generate text from jinja2 template file
@@ -294,12 +324,15 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     import opensitua_http as pkg
 
     variables = {
-        "loadjs":     loadlibs(jss, "js", DOCUMENT_WWW),
-        "loadcss":    loadlibs(csss, "css", DOCUMENT_WWW),
+        "loadjs":     loadlibs(jss, "js", DOCUMENT_WWW),   #deprecated!
+        "loadcss":    loadlibs(csss, "css", DOCUMENT_WWW), #deprecated!
+        "import" : load,
         "APPNAME": juststem(workdir),
+        "DOCUMENT_ROOT" : DOCUMENT_ROOT,
+        "DOCUMENT_WWW"  : DOCUMENT_WWW,
         "os": os,
         "math": math,
-        "package": pkg,
+        "package": pkg,  #deprecated!
         "opensitua_http":pkg,
         "environ":environ,
         "__file__":url
