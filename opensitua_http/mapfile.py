@@ -75,6 +75,12 @@ def safename(filename, additional_chars=r''):
         filename = filename.replace(c,'_')
     return filename
 
+def randcolor(alpha=255):
+    """
+    randcolor
+    """
+    return (randint(255), randint(255), randint(255), alpha)
+
 def classify(minValue, maxValue, k):
     w = (maxValue - minValue)
     w = w if w > 0 else 1.0
@@ -187,8 +193,100 @@ def multibandcolor():
         "rasterresampler": {"maxOversampling": 2}
     }
 
+def SimpleFill( name, color="#ff0000ff"):
+    return {
+            "type":"fill",
+            "name":"%s"%(name),
+            "force_rhr":0,
+            "alpha":1,
+            "clip_to_extent":1,
+            "layer":{
+                "class":"SimpleFill",
+                "locked":0,
+                "pass":0,
+                "enabled":1,
+                "prop": [
+                    {"k":"border_width_map_unit_scale", "v":"3x:0,0,0,0,0,0"},
+                    {"k":"color", "v":color},
+                    {"k":"joinstyle", "v":"bevel"},
+                    {"k":"offset", "v":"0,0"},
+                    {"k":"offset_map_unit_scale", "v":"3x:0,0,0,0,0,0"},
+                    {"k":"offset_unit", "v":"MM"},
+                    {"k":"outline_color", "v":"#000000ff"},
+                    {"k":"outline_style", "v":"solid"},
+                    {"k":"outline_width", "v":"0.26"},
+                    {"k":"outline_width_unit", "v":"MM"},
+                    {"k":"style", "v":"solid"}
+                ]
+            }#end layer
+        }
 
-def renderer_v2(geomtype="POINT"):
+def SimpleLine( options ):
+
+    line_color = options["line_color"] if "line_color" in options else randcolor()
+    line_style = options["line_style"] if "line_style" in options else "solid"
+    line_width = options["line_width"] if "line_width" in options else 0.26
+    line_width_unit = options["line_width_unit"] if "line_width_unit" in options else "MM"
+    joinstyle = options["joinstyle"] if "joinstyle" in options else "bevel"
+    capstyle = options["capstyle"] if "capstyle" in options else "square"
+
+    return {
+        "type": "line",
+        "name": "0",
+        "force_rhr": 0,
+        "alpha": 1,
+        "clip_to_extent": 1,
+        "layer": {
+            "class": "SimpleLine",
+            "locked": 0,
+            "pass": 0,
+            "enabled": 1,
+            "prop": [
+                {"k": "capstyle", "v": capstyle},
+                {"k": "customdash", "v": "5;2"},
+                {"k": "customdash_map_unit_scale", "v": "3x:0,0,0,0,0,0"},
+                {"k": "customdash_unit", "v": "MM"},
+                {"k": "draw_inside_polygon", "v": "0"},
+                {"k": "joinstyle", "v": joinstyle},
+                {"k": "line_color", "v": line_color},
+                {"k": "line_style", "v": line_style},
+                {"k": "line_width", "v": line_width},
+                {"k": "line_width_unit", "v": line_width_unit},
+                {"k": "offset", "v": "0"},
+                {"k": "offset_map_unit_scale", "v": "3x:0,0,0,0,0,0"},
+                {"k": "offset_unit", "v": "0"},
+                {"k": "ring_filter", "v": "0"},
+                {"k": "use_custom_dash", "v": "0"},
+                {"k": "width_map_unit_scale", "v": "3x:0,0,0,0,0,0"}
+            ]
+        }#end layer
+    }
+
+
+def categorizedSymbol( options ):
+
+    symbols =[]
+    categories =[]
+    for category in options["categories"]:
+        category["render"] = "true"
+        symbol = SimpleFill( category["symbol"], category["color"]  )
+        symbols.append(symbol)
+        categories.append(category)
+
+
+    return {
+        "type": "categorizedSymbol",
+        "attr": options["attr"],
+        "forceraster":0, "symbollevels":0, "enableorderby":0,
+        "categories": {"category":categories},
+        "symbols": {"symbol":symbols},
+        "rotation": "",
+        "sizescale":""
+    }
+
+
+
+def renderer_v2(geomtype="POINT", options=None):
     geomtype = upper(geomtype)
     if geomtype == "POINT":
         return {
@@ -208,7 +306,7 @@ def renderer_v2(geomtype="POINT"):
                         "locked": 0,
                         "prop": [
                             {"k": "angle", "v": 0},
-                            {"k": "color", "v": [randint(255), randint(255), randint(255), 255]},
+                            {"k": "color", "v": randcolor() },
                             {"k": "horizontal_anchor_point", "v": 1},
                             {"k": "joinstyle", "v": "bevel"},
                             {"k": "name", "v": "circle"},
@@ -235,6 +333,10 @@ def renderer_v2(geomtype="POINT"):
             }
         }  # end renderer-v2
     elif geomtype == "LINE":
+
+        if options and options["type"]=="singleSymbol":
+            return SimpleLine( options )
+
         return {
             "forceraster": 0,
             "symbollevels": 0,
@@ -257,7 +359,7 @@ def renderer_v2(geomtype="POINT"):
                             {"k": "customdash_unit", "v": "MM"},
                             {"k": "draw_inside_polygon", "v": 0},
                             {"k": "joinstyle", "v": "bevel"},
-                            {"k": "line_color", "v": [randint(255), randint(255), randint(255), 255]},
+                            {"k": "line_color", "v": randcolor() },
                             {"k": "line_style", "v": "solid"},
                             {"k": "line_width", "v": 0.26},
                             {"k": "line_width_unit", "v": "MM"},
@@ -276,6 +378,11 @@ def renderer_v2(geomtype="POINT"):
             }
         }  # end renderer-v2
     elif geomtype == "POLYGON":
+
+        if options and options["type"]=="categorizedSymbol":
+            return categorizedSymbol( options )
+
+
         return {
             "forceraster": 0,
             "symbollevels": 0,
@@ -293,7 +400,7 @@ def renderer_v2(geomtype="POINT"):
                         "locked": 0,
                         "prop": [
                             {"k": "border_width_map_unit_scale", "v": [0, 0, 0, 0, 0, 0]},
-                            {"k": "color", "v": [randint(255), randint(255), randint(255), 75]},
+                            {"k": "color", "v": randcolor(75)},
                             {"k": "joinstyle", "v": "bevel"},
                             {"k": "offset", "v": 0},
                             {"k": "offset_map_unit_scale", "v": [0, 0, 0, 0, 0, 0]},
@@ -571,7 +678,7 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
                     "current": ""
                 },
                 "edittypes": {"edittype": edittypes},
-                "renderer-v2": renderer_v2(geomtype),  # end renderer-v2
+                "renderer-v2": renderer_v2(geomtype , options),  # end renderer-v2
                 "labeling": {"type": "simple"},
                 "customproperties": {},
                 "blendMode": 0,
