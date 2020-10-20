@@ -262,6 +262,17 @@ def SimpleLine( options ):
         }#end layer
     }
 
+def singleSymbol( options ):
+
+    return {
+        "type": "singleSymbol",
+        "forceraster": 0,
+        "symbollevels": 0,
+        "enableorderby": 0,
+        "symbols": {"symbol": SimpleLine(options)},
+        "rotation": "",
+        "sizescale": ""
+    }
 
 def categorizedSymbol( options ):
 
@@ -273,7 +284,6 @@ def categorizedSymbol( options ):
         symbols.append(symbol)
         categories.append(category)
 
-
     return {
         "type": "categorizedSymbol",
         "attr": options["attr"],
@@ -284,6 +294,25 @@ def categorizedSymbol( options ):
         "sizescale":""
     }
 
+def graduatedSymbol( options ):
+
+    symbols =[]
+    categories =[]
+    for category in options["ranges"]:
+        category["render"] = "true"
+        symbol = SimpleFill( category["symbol"], category["color"]  )
+        symbols.append(symbol)
+        categories.append(category)
+
+    return {
+        "type": "graduatedSymbol",
+        "attr": options["attr"],
+        "forceraster":0, "symbollevels":0, "enableorderby":0,
+        "ranges": {"range":categories},
+        "symbols": {"symbol":symbols},
+        "rotation": "",
+        "sizescale":""
+    }
 
 
 def renderer_v2(geomtype="POINT", options=None):
@@ -334,8 +363,8 @@ def renderer_v2(geomtype="POINT", options=None):
         }  # end renderer-v2
     elif geomtype == "LINE":
 
-        if options and options["type"]=="singleSymbol":
-            return SimpleLine( options )
+        if options and "type" in options and options["type"]=="singleSymbol":
+            return singleSymbol( options )
 
         return {
             "forceraster": 0,
@@ -379,9 +408,10 @@ def renderer_v2(geomtype="POINT", options=None):
         }  # end renderer-v2
     elif geomtype == "POLYGON":
 
-        if options and options["type"]=="categorizedSymbol":
+        if options and "type" in options and options["type"]=="categorizedSymbol":
             return categorizedSymbol( options )
-
+        if options and "type" in options and options["type"]=="graduatedSymbol":
+            return graduatedSymbol( options )
 
         return {
             "forceraster": 0,
