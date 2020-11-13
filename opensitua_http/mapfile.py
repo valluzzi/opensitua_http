@@ -708,8 +708,9 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
                     "current": ""
                 },
                 "edittypes": {"edittype": edittypes},
-                "renderer-v2": renderer_v2(geomtype , options),  # end renderer-v2
-                "labeling": {"type": "simple"},
+                "renderer-v2": options["renderer-v2"] if "renderer-v2" in options else renderer_v2(geomtype , options),
+                "labeling": options["labeling"] if "labeling" in options else {},
+                "labelsEnabled": 1 if "labeling" in options else 0,
                 "customproperties": {},
                 "blendMode": 0,
                 "featureBlendMode": 0,
