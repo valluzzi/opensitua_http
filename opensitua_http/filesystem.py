@@ -22,7 +22,7 @@
 # Created:     27/12/2012
 # -----------------------------------------------------------------------------
 import os,sys,re
-import shutil
+import shutil,glob
 import datetime
 import hashlib
 import base64
@@ -211,6 +211,10 @@ def remove(files):
     """
     remove
     """
+    res=True
+    if isinstance(files, str) and "*" in files:
+        files = glob.glob(files)
+
     for item in listify(files):
         try:
             if os.path.isfile(item):
@@ -219,7 +223,24 @@ def remove(files):
                 shutil.rmtree(item)
         except Exception as ex:
             print(ex)
-            pass
+            res=False
+    return res
+
+def movefile(src,dst):
+    try:
+        if os.path.exists(src):
+            shutil.move(src,dst)
+    except Exception as ex:
+        print("Exception:",ex)
+
+def move( src, dst, env = {}):
+    src = sformat(src,env)
+    dst = sformat(dst,env)
+    if "*" in src:
+        for filesrc in glob.glob(src):
+            movefile(filesrc,dst)
+    else:
+        movefile(src, dst)
 
 
 def mkdirs(pathname):
