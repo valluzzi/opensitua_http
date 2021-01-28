@@ -297,8 +297,11 @@ def htmlResponse(environ, start_response=None, checkuser=False):
 
 
     params = Params(environ).toDictionary()
+    script_filename = normpath(params["SCRIPT_FILENAME"]) if "SCRIPT_FILENAME" in params else ""
 
-    url = params["url"] if "url" in params and params["url"] else normpath(params["SCRIPT_FILENAME"])
+    print("url" in params)
+
+    url = params["url"] if "url" in params and params["url"] else script_filename
     url = forceext(url, "html")
 
     #DOCUMENT_ROOT=D:\Users\.....\OpenGIS3
