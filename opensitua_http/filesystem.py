@@ -207,15 +207,17 @@ def rename(filesrc, filedest, overwrite=True):
     return False
 
 
-def remove(files):
+def remove(files, env={}):
     """
     remove
     """
     res=True
     if isinstance(files, str) and "*" in files:
+        files = sformat(files,env)
         files = glob.glob(files)
 
     for item in listify(files):
+        item = sformat(item, env)
         try:
             if os.path.isfile(item):
                 os.remove(item)
