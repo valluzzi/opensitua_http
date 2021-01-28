@@ -672,8 +672,8 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
 
             maplayer = {
                 "simplifyAlgorithm": 0,
-                "minimumScale": 0,
-                "maximumScale": 1e+08,
+                "minScale": 0,
+                "maxScale": 1e+08,
                 "simplifyDrawingHints": 1,
                 "minLabelScale": 0,
                 "maxLabelScale": 1e+08,
