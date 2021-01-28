@@ -298,8 +298,8 @@ def htmlResponse(environ, start_response=None, checkuser=False):
 
     form = Params(environ)
     environ["url"] = form.getvalue("url","")
-    print("url",environ["url"])
-    normpath(environ["SCRIPT_FILENAME"])
+    print("url",environ["url"],"<")
+    print("SCRIPT_FILENAME",environ["SCRIPT_FILENAME"],"<")
 
     url = environ["url"] if "url" in environ and environ["url"] else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
