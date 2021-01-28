@@ -296,14 +296,13 @@ def htmlResponse(environ, start_response=None, checkuser=False):
         return httpResponseNotFound(start_response)
 
 
-    form = Params(environ)
-    environ["url"] = form.getvalue("url","")
+    params = Params(environ).toDictionary()
 
-    url = environ["url"] if "url" in environ and environ["url"] else normpath(environ["SCRIPT_FILENAME"])
+    url = params["url"] if "url" in params and params["url"] else normpath(params["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
     #DOCUMENT_ROOT=D:\Users\.....\OpenGIS3
-    DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
+    DOCUMENT_ROOT = params["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in params else ""
     DOCUMENT_WWW  = DOCUMENT_ROOT+"/var/www"
 
     print(url, os.path.isfile(url))
