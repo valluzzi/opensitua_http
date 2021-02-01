@@ -298,9 +298,6 @@ def htmlResponse(environ, start_response=None, checkuser=False):
 
     form = Params(environ)
     environ["url"] = form.getvalue("url","")
-    print("url",environ["url"],"<")
-    print("SCRIPT_FILENAME",environ["SCRIPT_FILENAME"],"<")
-
     url = environ["url"] if "url" in environ and environ["url"] else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
@@ -308,7 +305,6 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
     DOCUMENT_WWW  = DOCUMENT_ROOT+"/var/www"
 
-    print(url, os.path.isfile(url))
     if not os.path.isfile(url):
         return httpResponseNotFound(start_response)
 
