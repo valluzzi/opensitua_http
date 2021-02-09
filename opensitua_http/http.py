@@ -295,9 +295,6 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     if checkuser and not check_user_permissions(environ):
         return httpResponseNotFound(start_response)
 
-
-    form = Params(environ)
-    environ["url"] = form.getvalue("url","")
     url = environ["url"] if "url" in environ and environ["url"] else normpath(environ["SCRIPT_FILENAME"])
     url = forceext(url, "html")
 
