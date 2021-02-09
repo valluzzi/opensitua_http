@@ -309,7 +309,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
 
     workdir    = justpath(environ["SCRIPT_FILENAME"])
     template_dir = justpath(url)
-    index_html = url
+    index_html = juststem(url)
 
     jss = (DOCUMENT_WWW + "/lib/js", workdir)
 
