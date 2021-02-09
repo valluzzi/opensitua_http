@@ -308,7 +308,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     if not os.path.isfile(url):
         return httpResponseNotFound(start_response)
 
-    workdir    = justpath(url)
+    workdir    = justpath(environ["SCRIPT_FILENAME"])
     index_html = justfname(url)
 
     jss = (DOCUMENT_WWW + "/lib/js", workdir)
