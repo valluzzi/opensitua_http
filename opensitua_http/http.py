@@ -308,6 +308,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
         return httpResponseNotFound(start_response)
 
     workdir    = justpath(environ["SCRIPT_FILENAME"])
+    template_dir = justpath(url)
     index_html = url
 
     jss = (DOCUMENT_WWW + "/lib/js", workdir)
@@ -316,7 +317,7 @@ def htmlResponse(environ, start_response=None, checkuser=False):
             DOCUMENT_WWW + "/lib/js",
             DOCUMENT_WWW + "/lib/images", workdir)
 
-    env = Environment(loader=FileSystemLoader(workdir))
+    env = Environment(loader=FileSystemLoader(template_dir))
     t = env.get_template(index_html)
 
     import opensitua_http as pkg
