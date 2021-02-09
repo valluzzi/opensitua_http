@@ -305,6 +305,8 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     DOCUMENT_ROOT = environ["DOCUMENT_ROOT"] if "DOCUMENT_ROOT" in environ else ""
     DOCUMENT_WWW  = DOCUMENT_ROOT+"/var/www"
 
+    print(url,os.path.isfile(url))
+    print("------------------------")
     if not os.path.isfile(url):
         return httpResponseNotFound(start_response)
 
