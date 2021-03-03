@@ -22,8 +22,8 @@
 #
 # Created:     26/09/2019
 # -------------------------------------------------------------------------------
-import gdal, gdalconst
-import osr, ogr
+from osgeo import gdal, gdalconst
+from osgeo import osr, ogr
 import numpy as np
 from .strings import *
 from .filesystem import *
