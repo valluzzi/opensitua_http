@@ -177,8 +177,11 @@ def load(dirname, environ):
         type=justext(filename)
         if "/webgis/" in filename:
             webname = "/webgis/"+ rightpart(filename, "/webgis/")
+        elif "/global/" in filename:
+            webname = "/global/"+ rightpart(filename, "/global/")
         else:
             webname = "/lib/" + rightpart(filename, "/lib/")
+
         if webname and webname != '/lib/':
             if type=="js":
                 text += sformat("<script type='text/javascript' src='{filename}?v={version}'></script>\n", {"filename": webname,"version":version});

@@ -365,6 +365,10 @@ def renderer_v2(geomtype="POINT", options=None):
 
         if options and "type" in options and options["type"]=="singleSymbol":
             return singleSymbol( options )
+        if options and "type" in options and options["type"]=="categorizedSymbol":
+            return categorizedSymbol( options )
+        if options and "type" in options and options["type"]=="graduatedSymbol":
+            return graduatedSymbol( options )
 
         return {
             "forceraster": 0,
