@@ -126,18 +126,12 @@ def webpath(filename, pivot ):
     return "/" + rightpart(normpath(filename), pivot)
 
 
-def loadlibs(dirnames, type, DOCUMENT_WWW):
+def loadlibs(dirnames, type, version):
     """
     loadlibs
     """
     text = ""
     dirnames = listify(dirnames, sep=",")
-
-    filever = DOCUMENT_WWW + "/webgis/version.txt"
-    version = filetostr(filever)
-    if version:
-        version = re.sub(r'__version__\s*=\s*', '', version, re.I)
-        version = version.strip('\'\"\r\n')
 
     for dirname in dirnames:
         filenames = ls(dirname, r'.*\.%s$'%(type), recursive=True)
@@ -162,23 +156,16 @@ def load(dirname, environ):
     """
     text = ""
     DOCUMENT_ROOT = environ['DOCUMENT_ROOT']
-    filever = DOCUMENT_ROOT + "/var/www/webgis/version.txt"
-    version = filetostr(filever)
-    if version:
-        version = re.sub(r'__version__\s*=\s*', '', version, re.I)
-        version = version.strip('\'\"\r\n')
-    text += sformat("<script type='text/javascript' src='/webgis/version.txt?v={version}'></script>\n", {"version":version});
-
-    dirname = DOCUMENT_ROOT + "/var/www/"+ dirname
+    DOCUMENT_WWW  = DOCUMENT_ROOT + "/var/www"
+    dirname = DOCUMENT_WWW +"/"+ dirname
+    version = environ["__version__"]
     filenames = ls(dirname, r'.*\.(js|css)$', recursive=True)
     for filename in filenames:
         #common libraries
         filename = normpath(filename)
         type=justext(filename)
-        if "/webgis/" in filename:
-            webname = "/webgis/"+ rightpart(filename, "/webgis/")
-        elif "/global/" in filename:
-            webname = "/global/"+ rightpart(filename, "/global/")
+        if "/var/www/" in filename:
+            webname = "/"+rightpart(filename, "/var/www/")
         else:
             webname = "/lib/" + rightpart(filename, "/lib/")
 
@@ -308,9 +295,18 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     if not os.path.isfile(url):
         return httpResponseNotFound(start_response)
 
+    #-- VERSIONE
+    filever = DOCUMENT_ROOT + "/version.txt"
+    version = filetostr(filever)
+    if version:
+        version = re.sub(r'const\s+__version__\s*=\s*', '', version, re.I)
+        version = version.replace("const","").strip('\'\"\r\n')
+    environ["__version__"] = version
+    #----
+
     workdir    = justpath(environ["SCRIPT_FILENAME"])
     template_dir = justpath(url)
-    index_html = justfname(url)
+    index_html   = justfname(url)
 
     jss = (DOCUMENT_WWW + "/lib/js", workdir)
 
@@ -324,8 +320,8 @@ def htmlResponse(environ, start_response=None, checkuser=False):
     import opensitua_http as pkg
 
     variables = {
-        "loadjs":     loadlibs(jss, "js", DOCUMENT_WWW),   #deprecated!
-        "loadcss":    loadlibs(csss, "css", DOCUMENT_WWW), #deprecated!
+        "loadjs":     loadlibs(jss, "js", version),   #deprecated!
+        "loadcss":    loadlibs(csss, "css", version), #deprecated!
         "import" : load,
         "APPNAME": juststem(workdir),
         "DOCUMENT_ROOT" : DOCUMENT_ROOT,
@@ -335,7 +331,8 @@ def htmlResponse(environ, start_response=None, checkuser=False):
         "package": pkg,  #deprecated!
         "opensitua_http":pkg,
         "environ":environ,
-        "__file__":url
+        "__file__":url,
+        "__version__":version
     }
     html = t.render(variables)  #.encode("utf-8","replace")
     return httpResponseOK(html, start_response)
