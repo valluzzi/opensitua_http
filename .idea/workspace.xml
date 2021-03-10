@@ -21,7 +21,8 @@
   <component name="ChangeListManager">
     <list default="true" id="d345f851-93d0-4ebd-8a5e-e881ada15f58" name="Default Changelist" comment="bug fixed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/opensitua_http/http.py" beforeDir="false" afterPath="$PROJECT_DIR$/opensitua_http/http.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/opensitua_http/mapfile.py" beforeDir="false" afterPath="$PROJECT_DIR$/opensitua_http/mapfile.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.py" beforeDir="false" afterPath="$PROJECT_DIR$/setup.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

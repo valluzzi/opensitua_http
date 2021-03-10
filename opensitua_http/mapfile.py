@@ -28,6 +28,10 @@ import numpy as np
 from .strings import *
 from .filesystem import *
 from .stime import *
+import operator
+import opensitua_core as pkg
+from opensitua_core import template
+from .http import Params,JSONResponse
 
 # TYPE [chart|circle|line|point|polygon|raster|query]
 GEOMETRY_TYPE = {
@@ -752,6 +756,50 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
             }
 
     return maplayer
+
+def MaplayerResponse(environ, options, start_response):
+    """
+    MaplayerResponse
+    """
+    params = Params(environ)
+    filename = params.getvalue("filename","")
+    APPNAME = params.getvalue("__APPNAME__")
+    DOCUMENT_ROOT = params.getvalue("DOCUMENT_ROOT")
+    DOCUMENT_WWW = params.getvalue("DOCUMENT_WWW")
+    PROJECT_DIR = params.getvalue("__PROJECTDIR__")
+    WHERE = params.getvalue("WHERE", "")
+
+    if os.path.isfile(filename) and DOCUMENT_ROOT and DOCUMENT_WWW:
+        filemap   = forceext(filename, "map")
+        options = options if options else {"pipe": "singlebandgray"}
+        # maplayer = GDAL_MAPLAYER(filename, options={"pipe": "singlebandgray"})
+
+        # maplayer = GDAL_MAPLAYER(filename, layername,
+        #     options={"pipe": "singlebandpseudocolor", "colorRampType": "INTERPOLATED", "classes": __CLASSES__})
+
+        maplayer = GDAL_MAPLAYER(filename, options=options)
+        # render filemap
+        variables = {
+            "os": os,
+            "re": re,
+            "operator": operator,
+            "opensitua_core": pkg,
+            "DOCUMENT_ROOT": DOCUMENT_ROOT,
+            "DOCUMENT_WWW": DOCUMENT_WWW,
+            "PROJECT_DIR": PROJECT_DIR,
+            "qgis": {"projectname": APPNAME},
+            "maplayers": [maplayer],
+            "WHERE": WHERE
+        }
+        # jinja2 template
+        tplmap ="{DOCUMENT_WWW}/lib/template/file.map".format(**variables)
+        template(tplmap, filemap, variables)
+        # none.html
+        filenone = justpath(filemap) + "/none.html"
+        if not os.path.isfile(filenone):
+            strtofile("""// mapserver template\n{ "x":[x], "y":[y], "value_0": [value_0] }""", filenone)
+        return JSONResponse(maplayer, start_response)
+
 
 
 if __name__ == "__main__":
