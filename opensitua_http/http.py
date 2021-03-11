@@ -41,14 +41,16 @@ class Params:
         constructor
         """
         self.q = {}
+        if isinstance(environ, (dict,)) and not "REQUEST_METHOD" in environ:
+            self.q = environ
 
-        if environ and environ["REQUEST_METHOD"] == "GET":
+        elif environ and "REQUEST_METHOD" in environ and environ["REQUEST_METHOD"] == "GET":
             request_body = environ['QUERY_STRING']
             q = parse_qs(request_body)
             for key in q:
                 self.q[key] = [escape(item) for item in q[key]]
 
-        elif environ and environ["REQUEST_METHOD"] == "POST":
+        elif environ and "REQUEST_METHOD" in environ and environ["REQUEST_METHOD"] == "POST":
 
             env_copy = environ.copy()
             env_copy['QUERY_STRING'] = ''
@@ -69,7 +71,10 @@ class Params:
             self.q["DOCUMENT_WWW"] = environ["DOCUMENT_WWW"]
 
         if environ and "HTTP_COOKIE" in environ:
-            self.q["HTTP_COOKIE"] = mapify(environ["HTTP_COOKIE"], ";")
+            if isinstance(environ["HTTP_COOKIE"],(str,)):
+                self.q["HTTP_COOKIE"] = mapify(environ["HTTP_COOKIE"], ";")
+            else:
+                self.q["HTTP_COOKIE"] = environ["HTTP_COOKIE"]
 
         if "encoded" in self.q and self.q["encoded"] in ("true", "1", 1):
             for key in q:
