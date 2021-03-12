@@ -768,11 +768,6 @@ def MaplayerResponse(environ, options, start_response):
     DOCUMENT_WWW = params.getvalue("DOCUMENT_WWW")
     PROJECT_DIR = params.getvalue("__PROJECTDIR__")
     WHERE = params.getvalue("WHERE", "")
-    print("================")
-    print("filename=",filename)
-    print(DOCUMENT_ROOT)
-    print(DOCUMENT_WWW)
-    print("================")
 
     if os.path.isfile(filename) and DOCUMENT_ROOT and DOCUMENT_WWW:
         filemap   = forceext(filename, "map")
