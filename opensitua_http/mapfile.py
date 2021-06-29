@@ -485,10 +485,10 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
         filejpgw = forceext(filename, "jpgw")
         filewld = forceext(filename, "wld")
 
-        if isfile(filetfw):
+        if os.path.isfile(filetfw):
             rename(filetfw, filewld)
 
-        if isfile(filejwg):
+        if os.path.isfile(filejwg):
             arr = filetoarray(filejwg)
             (px, rotA, rotB, py, x0, y0) = [item.strip("\r\n") for item in arr][:6]
             p1 = ogr.CreateGeometryFromWkt("POINT (%s %s)" % (x0, y0))
@@ -504,7 +504,7 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
             strtofile(text, filewld)
             #remove(filejwg)
 
-        if isfile(filejgw):
+        if os.path.isfile(filejgw):
             arr = filetoarray(filejgw)
             (px, rotA, rotB, py, x0, y0) = [item.strip("\r\n") for item in arr][:6]
             p1 = ogr.CreateGeometryFromWkt("POINT (%s %s)" % (x0, y0))
@@ -520,7 +520,7 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
             strtofile(text, filewld)
             #remove(filejgw)
 
-        if isfile(filejpgw):
+        if os.path.isfile(filejpgw):
             rename(filejpgw, filewld)
 
         data = gdal.Open(filename, gdalconst.GA_ReadOnly)
@@ -575,11 +575,11 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
             maxy = y0
             extent = (minx, min(miny, maxy), maxx, max(miny, maxy))
             other = (px, py, nodata, datatype)
-            descr = srs.GetAttrValue('projcs')
+            descr = srs.GetName() #srs.GetAttrValue('projcs')
             pipe = {}
 
             if ext in ("jpg", "jpeg") and not (
-                    isfile(filetfw) or isfile(filejwg) or isfile(filejgw) or isfile(filejpgw) or isfile(filewld)):
+                    os.path.isfile(filetfw) or os.path.isfile(filejwg) or os.path.isfile(filejgw) or os.path.isfile(filejpgw) or os.path.isfile(filewld)):
                 text = sformat("""{px}\n{rotA}\n{rotB}\n{py}\n{minx}\n{miny}""",
                                {"px": px, "py": -abs(py), "minx": minx, "miny": miny, "rotA": rotA, "rotB": rotB})
                 strtofile(text, filewld)
@@ -628,12 +628,20 @@ def GDAL_MAPLAYER(filename, layername=None, options=None):
                         "ellipsoidacronym": ellps,
                         "geographicflag": (srs.IsGeographic() > 0),
                         "proj4": proj4,
-                        "projectionacronym": proj,
+                        "projectionacronym": srs.GetName(),
                         "srid": "",
                         "srsid": ""
                     }
                 },
-                "customproperties": {},
+                "customproperties": {
+                    "width": n,
+                    "height": m,
+                    "dtype": datatype,
+                    "units": "degrees" if srs.IsGeographic() else "meters",
+                    "px": px,
+                    "py": py,
+                    "bands": b,
+                },
                 "provider": "gdal",
                 "noData": {"noDataList": {
                     "bandNo": 1,
